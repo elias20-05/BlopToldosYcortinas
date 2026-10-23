@@ -326,14 +326,23 @@ function initContactForm() {
 
 function initThemeToggle() {
   const button = document.querySelector("#theme-toggle");
-  const stored = localStorage.getItem("blop-theme");
+  let stored = null;
+  try {
+    stored = localStorage.getItem("blop-theme");
+  } catch (_error) {
+    stored = null;
+  }
   const initial = stored === "dark" ? "dark" : "light";
   setTheme(initial);
   button.addEventListener("click", () => {
     const current = document.body.dataset.theme === "dark" ? "dark" : "light";
     const next = current === "dark" ? "light" : "dark";
     setTheme(next);
-    localStorage.setItem("blop-theme", next);
+    try {
+      localStorage.setItem("blop-theme", next);
+    } catch (_error) {
+      // No-op: algunos contextos file:// bloquean localStorage.
+    }
   });
 }
 
@@ -353,6 +362,11 @@ function observeRevealElements() {
 }
 
 function initRevealAnimations() {
+  document.body.classList.add("js-motion");
+  if (!("IntersectionObserver" in window)) {
+    document.querySelectorAll(".reveal").forEach((element) => element.classList.add("is-visible"));
+    return;
+  }
   revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
