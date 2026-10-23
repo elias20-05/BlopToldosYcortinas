@@ -80,9 +80,7 @@ const DECO = [
     title: "Adorno Banghi",
     short: "Pieza artesanal para interior.",
     description: "Objeto decorativo con textura orgánica para livings y recibidores.",
-    images: [
-      "public/images/adornos/IMG_20260223_165423163.jpg"
-    ]
+    images: ["public/images/adornos/IMG_20260223_165423163.jpg"]
   },
   {
     id: "d2",
@@ -90,9 +88,7 @@ const DECO = [
     title: "Adorno Thorne",
     short: "Acento minimalista.",
     description: "Composición limpia y cálida para estanterías o mesas auxiliares.",
-    images: [
-      "public/images/adornos/IMG_20260223_164634553.jpg"
-    ]
+    images: ["public/images/adornos/IMG_20260223_164634553.jpg"]
   },
   {
     id: "d3",
@@ -100,9 +96,7 @@ const DECO = [
     title: "Espejo Deco",
     short: "Luz y amplitud visual.",
     description: "Espejo decorativo para potenciar profundidad en interiores.",
-    images: [
-      "public/images/espejos/file_00000000b7a4720ebb2130a6c2e43398.png"
-    ]
+    images: ["public/images/espejos/file_00000000b7a4720ebb2130a6c2e43398.png"]
   },
   {
     id: "d4",
@@ -110,9 +104,7 @@ const DECO = [
     title: "Textil Decorativo",
     short: "Texturas suaves para ambientar.",
     description: "Piezas textiles para sumar confort y color al hogar.",
-    images: [
-      "productoDECO/imagenesDECO/IMG_20260224_163320990.jpg"
-    ]
+    images: ["productoDECO/imagenesDECO/IMG_20260224_163320990.jpg"]
   }
 ];
 
@@ -157,7 +149,7 @@ const modalNext = document.querySelector("#modal-next");
 
 function createProductCard(item) {
   return `
-    <article class="product-card">
+    <article class="product-card reveal">
       <button type="button" data-open-item="${item.id}">
         <img src="${item.images[0]}" alt="${item.title}" loading="lazy">
         <div class="product-meta">
@@ -172,7 +164,7 @@ function createProductCard(item) {
 
 function createGalleryCard(item) {
   return `
-    <article class="gallery-card">
+    <article class="gallery-card reveal">
       <button type="button" data-open-gallery="${item.id}">
         <img src="${item.image}" alt="${item.title}" loading="lazy">
         <div class="gallery-meta">
@@ -189,6 +181,7 @@ function renderProducts() {
     ? PRODUCTS
     : PRODUCTS.filter((item) => item.category === state.productsFilter);
   productGrid.innerHTML = list.map(createProductCard).join("");
+  observeRevealElements();
 }
 
 function renderDeco() {
@@ -196,10 +189,12 @@ function renderDeco() {
     ? DECO
     : DECO.filter((item) => item.category === state.decoFilter);
   decoGrid.innerHTML = list.map(createProductCard).join("");
+  observeRevealElements();
 }
 
 function renderGallery() {
   galleryGrid.innerHTML = GALLERY.map(createGalleryCard).join("");
+  observeRevealElements();
 }
 
 function syncFilterButtons(group, activeFilter) {
@@ -329,6 +324,113 @@ function initContactForm() {
   });
 }
 
+function initThemeToggle() {
+  const button = document.querySelector("#theme-toggle");
+  const stored = localStorage.getItem("blop-theme");
+  const initial = stored === "dark" ? "dark" : "light";
+  setTheme(initial);
+  button.addEventListener("click", () => {
+    const current = document.body.dataset.theme === "dark" ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("blop-theme", next);
+  });
+}
+
+function setTheme(theme) {
+  const button = document.querySelector("#theme-toggle");
+  const isDark = theme === "dark";
+  document.body.dataset.theme = isDark ? "dark" : "light";
+  button.textContent = isDark ? "☀️" : "🌙";
+  button.setAttribute("aria-pressed", String(isDark));
+  button.setAttribute("aria-label", isDark ? "Activar modo claro" : "Activar modo oscuro");
+}
+
+let revealObserver;
+function observeRevealElements() {
+  if (!revealObserver) return;
+  document.querySelectorAll(".reveal:not(.is-visible)").forEach((element) => revealObserver.observe(element));
+}
+
+function initRevealAnimations() {
+  revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+  observeRevealElements();
+}
+
+function initBeforeAfterSlider() {
+  const slider = document.querySelector("#before-after");
+  const afterWrap = document.querySelector("#after-wrap");
+  const handle = document.querySelector("#ba-handle");
+  if (!slider || !afterWrap || !handle) return;
+
+  let active = false;
+
+  const updateFromClientX = (clientX) => {
+    const rect = slider.getBoundingClientRect();
+    const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+    const percent = (x / rect.width) * 100;
+    afterWrap.style.width = `${percent}%`;
+    handle.style.left = `${percent}%`;
+  };
+
+  const onPointerMove = (event) => {
+    if (!active) return;
+    updateFromClientX(event.clientX);
+  };
+
+  const stopDrag = () => {
+    active = false;
+    handle.releasePointerCapture?.(handle.pointerId);
+  };
+
+  handle.addEventListener("pointerdown", (event) => {
+    active = true;
+    handle.pointerId = event.pointerId;
+    handle.setPointerCapture(event.pointerId);
+    updateFromClientX(event.clientX);
+  });
+
+  slider.addEventListener("pointerdown", (event) => {
+    if (event.target !== handle) updateFromClientX(event.clientX);
+  });
+
+  handle.addEventListener("pointermove", onPointerMove);
+  handle.addEventListener("pointerup", stopDrag);
+  handle.addEventListener("pointercancel", stopDrag);
+}
+
+function initBudgetCalculator() {
+  const widthInput = document.querySelector("#budget-width");
+  const heightInput = document.querySelector("#budget-height");
+  const typeSelect = document.querySelector("#budget-type");
+  const total = document.querySelector("#budget-total");
+  if (!widthInput || !heightInput || !typeSelect || !total) return;
+
+  const calculate = () => {
+    const width = Number(widthInput.value) || 0;
+    const height = Number(heightInput.value) || 0;
+    const area = Math.max(width * height, 0);
+    const baseRate = typeSelect.value === "Toldo" ? 74000 : 59000;
+    const estimate = area * baseRate;
+    total.textContent = estimate > 0
+      ? estimate.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 })
+      : "$ 0";
+  };
+
+  [widthInput, heightInput, typeSelect].forEach((element) => {
+    element.addEventListener("input", calculate);
+    element.addEventListener("change", calculate);
+  });
+  calculate();
+}
+
 function initBaseUi() {
   document.querySelector("#current-year").textContent = String(new Date().getFullYear());
   document.addEventListener("keydown", (event) => {
@@ -343,4 +445,8 @@ initFilters();
 initModalEvents();
 initMenu();
 initContactForm();
+initThemeToggle();
+initRevealAnimations();
+initBeforeAfterSlider();
+initBudgetCalculator();
 initBaseUi();

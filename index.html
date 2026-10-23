@@ -50,9 +50,11 @@
         <li><a href="#servicios">Servicios</a></li>
         <li><a href="#productos">Toldos y Cortinas</a></li>
         <li><a href="#decoracion">Decoración</a></li>
+        <li><a href="#comparador">Antes y Después</a></li>
         <li><a href="#galeria">Galería</a></li>
         <li><a href="#contacto">Contacto</a></li>
       </ul>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activar modo oscuro" aria-pressed="false">🌙</button>
     </nav>
 
     <div id="menu-movil" class="menu-movil" hidden>
@@ -60,12 +62,14 @@
         <li><a href="#servicios">Servicios</a></li>
         <li><a href="#productos">Toldos y Cortinas</a></li>
         <li><a href="#decoracion">Decoración</a></li>
+        <li><a href="#comparador">Antes y Después</a></li>
         <li><a href="#galeria">Galería</a></li>
+        <li><a href="#presupuesto">Presupuesto</a></li>
         <li><a href="#contacto">Contacto</a></li>
       </ul>
     </div>
 
-    <section class="hero container" aria-labelledby="hero-title">
+    <section class="hero container reveal" aria-labelledby="hero-title">
       <div>
         <p class="eyebrow">Toldos · Cortinas · Deco</p>
         <h1 id="hero-title">Diseñamos espacios cómodos, frescos y con estilo.</h1>
@@ -82,7 +86,7 @@
   </header>
 
   <main id="contenido-principal">
-    <section id="servicios" class="section">
+    <section id="servicios" class="section reveal">
       <div class="container">
         <h2>Servicios</h2>
         <p class="section-intro">Soluciones integrales para interior y exterior.</p>
@@ -99,7 +103,7 @@
       </div>
     </section>
 
-    <section id="productos" class="section section-alt" aria-labelledby="productos-title">
+    <section id="productos" class="section section-alt reveal" aria-labelledby="productos-title">
       <div class="container">
         <h2 id="productos-title">Toldos y Cortinas</h2>
         <p class="section-intro">Modelos funcionales para control solar, privacidad y diseño.</p>
@@ -112,7 +116,7 @@
       </div>
     </section>
 
-    <section id="decoracion" class="section" aria-labelledby="decoracion-title">
+    <section id="decoracion" class="section reveal" aria-labelledby="decoracion-title">
       <div class="container">
         <h2 id="decoracion-title">Decoración</h2>
         <p class="section-intro">Objetos y acentos para dar personalidad al hogar.</p>
@@ -126,7 +130,23 @@
       </div>
     </section>
 
-    <section id="galeria" class="section section-alt" aria-labelledby="galeria-title">
+    <section id="comparador" class="section section-alt reveal" aria-labelledby="comparador-title">
+      <div class="container">
+        <h2 id="comparador-title">Antes y Después</h2>
+        <p class="section-intro">Arrastrá el deslizador para ver la transformación del espacio.</p>
+        <div class="before-after" id="before-after">
+          <img src="public/images/IMG_20260109_173745.jpg" alt="Antes de instalar cortinas" class="before-image" loading="lazy">
+          <div class="after-wrap" id="after-wrap">
+            <img src="public/images/IMG_20260109_174943.jpg" alt="Después de instalar cortinas BLOP" class="after-image" loading="lazy">
+          </div>
+          <button class="ba-handle" id="ba-handle" type="button" aria-label="Deslizar comparación antes y después"></button>
+          <span class="ba-label ba-label-left">Antes</span>
+          <span class="ba-label ba-label-right">Después</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="galeria" class="section reveal" aria-labelledby="galeria-title">
       <div class="container">
         <h2 id="galeria-title">Galería de proyectos</h2>
         <p class="section-intro">Algunos espacios transformados por BLOP.</p>
@@ -134,7 +154,28 @@
       </div>
     </section>
 
-    <section id="contacto" class="section">
+    <section id="presupuesto" class="section section-alt reveal" aria-labelledby="presupuesto-title">
+      <div class="container budget-layout">
+        <div>
+          <h2 id="presupuesto-title">Calculadora rápida</h2>
+          <p class="section-intro">Estimá el costo inicial de tu proyecto en segundos.</p>
+        </div>
+        <form id="budget-form" class="budget-form" novalidate>
+          <label for="budget-width">Ancho (m)</label>
+          <input id="budget-width" name="ancho" type="number" min="0.5" step="0.1" value="2">
+          <label for="budget-height">Alto (m)</label>
+          <input id="budget-height" name="alto" type="number" min="0.5" step="0.1" value="2">
+          <label for="budget-type">Tipo de producto</label>
+          <select id="budget-type" name="tipo">
+            <option value="Toldo">Toldo</option>
+            <option value="Cortina Roller">Cortina Roller</option>
+          </select>
+          <p class="budget-result">Estimado: <strong id="budget-total">$ 0</strong></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="contacto" class="section reveal">
       <div class="container contact-layout">
         <div>
           <h2>Contacto</h2>
